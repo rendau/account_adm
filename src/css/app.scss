@@ -11,6 +11,10 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+table {
+  font-size: 0.84rem;
+}
+
 .text-underline {
   text-decoration: underline;
 }
@@ -23,6 +27,24 @@ h1, h2, h3, h4, h5, h6 {
 
 .app-bg-color {
   background-color: $bg-color;
+}
+
+.min-width {
+  width: 1%;
+}
+
+.q-table {
+  thead {
+    td {
+      font-size: inherit;
+    }
+  }
+
+  tbody {
+    td {
+      font-size: inherit;
+    }
+  }
 }
 
 .q-field {
