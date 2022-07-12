@@ -2,6 +2,7 @@ import { store } from 'quasar/wrappers'
 import { createStore } from 'vuex'
 
 import app from './app'
+import dic from './dic'
 import profile from './profile'
 
 /*
@@ -17,6 +18,7 @@ export default store(function (/* { ssrContext } */) {
   const Store = createStore({
     modules: {
       app,
+      dic,
       profile,
     },
 

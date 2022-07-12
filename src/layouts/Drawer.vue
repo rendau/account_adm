@@ -23,18 +23,18 @@ import { computed } from 'vue'
 const menus = computed(() => [
   {
     label: 'Users',
-    icon: 'clear_all',
-    // route: { name: 'orders' },
+    icon: 'people',
+    route: { name: 'users' },
   },
   {
     label: 'Roles',
     icon: 'corporate_fare',
-    // route: { name: 'prvs' },
+    route: { name: 'roles' },
   },
   {
     label: 'Permissions',
-    icon: 'mail_outline',
-    // route: { name: 'refund_notify_rules' },
+    icon: 'fitbit',
+    route: { name: 'perms' },
   },
 ])
 </script>

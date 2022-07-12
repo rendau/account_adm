@@ -34,6 +34,7 @@ onMounted(() => {
 
   Promise.all([
     store.dispatch('profile/refreshSinceAppStart'),
+    store.dispatch('dic/get'),
   ]).catch(err => {
     console.error('Fail to start app', err)
     store.commit('app/setAppError', cns.ServiceNotAvailable)

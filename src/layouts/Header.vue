@@ -5,10 +5,9 @@
         <q-btn flat dense round icon="menu" color="grey-8" @click="$store.commit('app/toggleDrawer')"/>
       </div>
 
-<!--      <q-avatar>
-        <q-img no-spinner no-transition src="~assets/mechta_icon.png"
-               width="40px"/>
-      </q-avatar>-->
+      <q-avatar>
+        <q-icon name="vpn_key" size="26px"/>
+      </q-avatar>
 
       <q-toolbar-title class="text-weight-medium">
         Accounts

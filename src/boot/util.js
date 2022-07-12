@@ -46,6 +46,43 @@ let util = {
     return v.toLocaleString() + (ext || '')
   },
 
+  lFind (list, idV, idAttr = 'id') {
+    if (_.isString(list)) {
+      list = _store.state.dic[list]
+    }
+    return _.find(list || [], { [idAttr]: idV }) || null
+  },
+  lOps (list, vAttr = 'id', lAttr = 'name') {
+    if (_.isString(list)) {
+      list = _store.state.dic[list]
+    }
+    if (_.isFunction(lAttr)) {
+      return _.map(list, x => ({
+        value: x[vAttr],
+        label: lAttr(x),
+      }))
+    }
+    return _.map(list, x => ({
+      value: x[vAttr],
+      label: x[lAttr],
+    }))
+  },
+  lOpsWithEmpty (list, vAttr = 'id', lAttr = 'name', eVal = null, eLabel = '---') {
+    return [
+      { value: eVal, label: eLabel },
+      ...this.lOps(list, vAttr, lAttr),
+    ]
+  },
+  lGetAttr (list, id, attr = 'name') {
+    if (_.isString(list)) {
+      list = _store.state.dic[list]
+    }
+    return (_.find(list || [], { id }) || {})[attr] || id
+  },
+  lGetAttrJoined (list, ids, attr, sep = ', ') {
+    return _.join(_.map(ids || [], x => this.lGetAttr(list, x, attr)), sep)
+  },
+
   verScrollBarStyle () {
     return {
       bar: {

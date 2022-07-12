@@ -5,7 +5,7 @@ let ctxLoadSinceAppStartPr = null
 
 export function refresh ({ state, dispatch }, nr401 = false) {
   console.log('start refresh-profile')
-  return this.$api.get('profile', { baseURL: cns.AccountApiUrl, nr401 }).then(resp => {
+  return this.$api.get('profile', { nr401 }).then(resp => {
     // console.log('profile', resp.data)
 
     return dispatch('set', resp.data).then(() => resp)
@@ -16,7 +16,7 @@ export function refreshSinceAppStart ({ dispatch }) {
   if (!ctxLoadSinceAppStartPr) {
     console.log('start refresh-profile since app-start')
     ctxLoadSinceAppStartPr = dispatch('refresh', true).catch(err => {
-      if (err.data && err.data.code === cns.ErrNotAuthorized) {
+      if (err.data?.code === cns.ErrNotAuthorized) {
         return Promise.resolve(null)
       } else {
         // console.error(err)
@@ -35,7 +35,7 @@ export function resetCtxLoadSinceAppStartPr () {
 export function logout ({ dispatch, getters }) {
   let pr
   if (getters['authTokenAccess']) {
-    pr = this.$api.post('profile/logout', null, { baseURL: cns.AccountApiUrl }).catch(() => {})
+    pr = this.$api.post('profile/logout', null, { nr401: true }).catch(() => {})
   } else {
     pr = Promise.resolve()
   }
@@ -44,13 +44,9 @@ export function logout ({ dispatch, getters }) {
 
 export function refreshAccessToken ({ getters, commit }) {
   console.log('refreshing access token')
-  return this.$axios.post('profile/auth/token', {
+  return this.$api.post('profile/auth/token', {
     refresh_token: getters['authTokenRefresh'],
-  }, {
-    baseURL: cns.AccountApiUrl,
-    responseType: 'json',
-    timeout: 10000,
-  }).then(resp => {
+  }, { nfa: true }).then(resp => {
     let aToken = resp.data?.access_token || ''
     commit('setTokenAccess', aToken)
     return aToken

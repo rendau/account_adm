@@ -51,7 +51,7 @@ function irRepNotAuthorized (err, axiosInstance) {
         oConfig.nfa = true
         return axiosInstance.request(oConfig)
       }, sErr => {
-        if (sErr.response?.status !== 401) {
+        if (sErr.response?.status !== 401 && sErr.data?.code !== cns.ErrNotAuthorized) {
           console.error('fail to refresh access token', sErr)
         }
         return logout(err, nr401).then(() => Promise.reject(err))

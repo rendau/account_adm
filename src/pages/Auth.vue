@@ -67,7 +67,7 @@ const onAuthClick = () => {
   if (authWindow) {
     authWindow.close()
   }
-  authWindow = window.open(cns.AccountAuthUrl)
+  authWindow = window.open(cns.AuthUrl)
 }
 
 onMounted(() => {

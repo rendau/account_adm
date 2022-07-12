@@ -4,8 +4,8 @@
 
     <Drawer/>
 
-    <q-page-container>
-      <q-page class="q-pt-md q-pl-lg q-pr-md q-pb-lg" style="padding-left: 20px">
+    <q-page-container class="fit">
+      <q-page class="fit q-pt-md q-pl-lg q-pr-md q-pb-lg">
         <router-view/>
       </q-page>
     </q-page-container>

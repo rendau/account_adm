@@ -1,7 +1,7 @@
 const routes = [
   {
     path: '/auth',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('layouts/EmptyLayout.vue'),
     meta: {
       restrictAuth: true,
     },
@@ -12,11 +12,12 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    meta: {
-      requiresAuth: true,
-    },
+    meta: { requiresAuth: true },
+    redirect: { name: 'users' },
     children: [
-      { path: '', component: () => import('pages/Index.vue') },
+      { path: 'users', name: 'users', component: () => import('pages/Users.vue') },
+      { path: 'roles', name: 'roles', component: () => import('pages/Roles.vue') },
+      { path: 'perms', name: 'perms', component: () => import('pages/Perms.vue') },
     ],
   },
 
