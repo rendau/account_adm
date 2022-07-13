@@ -1,5 +1,5 @@
 <template>
-  <tr class="cursor-pointer">
+  <tr class="cursor-pointer" :class="{'text-grey-6': data.is_system}">
     <td class="text-no-wrap text-center">
       {{ data.id }}
     </td>

@@ -2,7 +2,7 @@
   <div>
     <div :class="{'hidden': $route.meta.rid !== rid}">
       <div class="text-right">
-        <q-btn unelevated label="Добавить" color="positive" @click="onAddClick"/>
+        <q-btn unelevated icon="add" label="Add" color="positive" @click="onAddClick"/>
       </div>
 
       <div class="q-pt-md"/>

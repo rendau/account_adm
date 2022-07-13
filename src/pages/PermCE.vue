@@ -4,7 +4,7 @@
       <div>
         <ac-page-toolbar bb>
           <ac-page-title>
-            {{ id ? 'Edit permission' : 'Create permission' }}
+            {{ id ? 'Permission' : 'Create permission' }}
           </ac-page-title>
         </ac-page-toolbar>
 
@@ -12,16 +12,14 @@
           <template v-if="!loading && data">
             <div class="row items-start q-col-gutter-md">
               <!-- active -->
-              <div class="col-12 col-md-6">
-                <q-toggle label="Is system" v-model="data.is_system"/>
+              <div v-if="data.is_system" class="col-12 text-negative">
+                System
               </div>
-
-              <div class="gt-sm col-6"/>
 
               <!-- id -->
               <div class="col-12 col-md-6">
                 <q-input outlined
-                         :disable="!isCreating"
+                         :readonly="data.is_system"
                          label="ID"
                          v-model="data.id"/>
               </div>
@@ -29,16 +27,33 @@
               <!-- app -->
               <div class="col-12 col-md-6">
                 <q-input outlined
+                         :readonly="data.is_system"
                          label="Application"
                          v-model="data.app"/>
               </div>
+
+              <!-- dsc -->
+              <div class="col-12">
+                <q-input outlined
+                         :readonly="data.is_system"
+                         label="Description"
+                         v-model="data.dsc"/>
+              </div>
             </div>
 
-            <div class="q-pt-lg q-pb-md"/>
+            <template v-if="!data.is_system">
+              <div class="q-pt-lg q-pb-md"/>
 
-            <div>
-              <q-btn unelevated :label="id ? 'Save' : 'Create'" color="positive" @click="onSubmitClick"/>
-            </div>
+              <div class="row items-center q-gutter-x-md">
+                <div>
+                  <q-btn unelevated :label="isCreating ? 'Create' : 'Save'" color="positive" @click="onSubmitClick"/>
+                </div>
+
+                <div v-if="!isCreating">
+                  <q-btn unelevated label="Delete" color="negative" @click="onDeleteClick"/>
+                </div>
+              </div>
+            </template>
 
             <div class="q-pt-lg"/>
           </template>
@@ -57,11 +72,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n/index'
 
 const route = useRoute()
 const router = useRouter()
 const store = useStore()
 const $q = useQuasar()
+const { t } = useI18n()
 
 const props = defineProps({
   rid: {},
@@ -91,21 +108,36 @@ const fetch = () => {
 }
 
 const onSubmitClick = () => {
-  // loading.value = true
-  // if (id.value) {
-  //   data.value.id = id.value
-  // }
-  // store.dispatch('prv/save', {
-  //   id: id.value,
-  //   data: data.value,
-  // }).then(() => {
-  //   $q.notify({ type: 'positive', message: t('success_perform_msg') })
-  //   router.back()
-  // }, err => {
-  //   $q.notify({ type: 'negative', message: err.data.desc })
-  // }).then(() => {
-  //   loading.value = false
-  // })
+  loading.value = true
+  store.dispatch('perm/save', {
+    id: id.value,
+    data: data.value,
+  }).then(() => {
+    $q.notify({ type: 'positive', message: t('success_perform_msg') })
+    router.back()
+  }, err => {
+    $q.notify({ type: 'negative', message: err.data.desc })
+  }).then(() => {
+    loading.value = false
+  })
+}
+
+const onDeleteClick = () => {
+  $q.dialog({
+    message: 'Are you sure you want to delete the permission?',
+    ok: { label: 'Yes', noCaps: true },
+    cancel: { label: 'Cancel', flat: true, noCaps: true },
+  }).onOk(() => {
+    loading.value = true
+    store.dispatch('perm/remove', id.value).then(() => {
+      $q.notify({ type: 'positive', message: t('success_perform_msg') })
+      router.back()
+    }, err => {
+      $q.notify({ type: 'negative', message: err.data.desc })
+    }).then(() => {
+      loading.value = false
+    })
+  })
 }
 
 onMounted(fetch)
