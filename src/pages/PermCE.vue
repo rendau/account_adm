@@ -9,54 +9,56 @@
         </ac-page-toolbar>
 
         <div class="relative-position" style="min-height: 50px">
-          <template v-if="!loading && data">
-            <div class="row items-start q-col-gutter-md">
-              <!-- active -->
-              <div v-if="data.is_system" class="col-12 text-negative">
-                System
-              </div>
+          <div v-if="!loading && data" class="row">
+            <div class="col-12 col-md-10 col-lg-6">
+              <div class="row items-start q-col-gutter-md">
+                <!-- active -->
+                <div v-if="data.is_system" class="col-12 text-negative">
+                  System
+                </div>
 
-              <!-- id -->
-              <div class="col-12 col-md-6">
-                <q-input outlined
-                         :readonly="data.is_system"
-                         label="ID"
-                         v-model="data.id"/>
-              </div>
+                <!-- id -->
+                <div class="col-12 col-md-6">
+                  <q-input outlined
+                           :readonly="data.is_system"
+                           label="ID"
+                           v-model="data.id"/>
+                </div>
 
-              <!-- app -->
-              <div class="col-12 col-md-6">
-                <q-input outlined
-                         :readonly="data.is_system"
-                         label="Application"
-                         v-model="data.app"/>
-              </div>
+                <!-- app -->
+                <div class="col-12 col-md-6">
+                  <q-input outlined
+                           :readonly="data.is_system"
+                           label="Application"
+                           v-model="data.app"/>
+                </div>
 
-              <!-- dsc -->
-              <div class="col-12">
-                <q-input outlined
-                         :readonly="data.is_system"
-                         label="Description"
-                         v-model="data.dsc"/>
+                <!-- dsc -->
+                <div class="col-12">
+                  <q-input outlined
+                           :readonly="data.is_system"
+                           label="Description"
+                           v-model="data.dsc"/>
+                </div>
               </div>
             </div>
+          </div>
 
-            <template v-if="!data.is_system">
-              <div class="q-pt-lg q-pb-md"/>
+          <template v-if="!data.is_system">
+            <div class="q-pt-lg q-pb-md"/>
 
-              <div class="row items-center q-gutter-x-md">
-                <div>
-                  <q-btn unelevated :label="isCreating ? 'Create' : 'Save'" color="positive" @click="onSubmitClick"/>
-                </div>
-
-                <div v-if="!isCreating">
-                  <q-btn unelevated label="Delete" color="negative" @click="onDeleteClick"/>
-                </div>
+            <div class="row items-center q-gutter-x-md">
+              <div>
+                <q-btn unelevated :label="isCreating ? 'Create' : 'Save'" color="positive" @click="onSubmitClick"/>
               </div>
-            </template>
 
-            <div class="q-pt-lg"/>
+              <div v-if="!isCreating">
+                <q-btn unelevated label="Delete" color="negative" @click="onDeleteClick"/>
+              </div>
+            </div>
           </template>
+
+          <div class="q-pt-lg"/>
 
           <ac-spinner :showing="loading"/>
         </div>

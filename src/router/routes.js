@@ -51,6 +51,18 @@ const routes = [
           }
         ],
       },
+      {
+        path: 'roles',
+        name: 'roles',
+        component: () => import('pages/Roles.vue'),
+        children: [
+          {
+            path: 'ce/:role_id?',
+            name: 'roles-role_ce',
+            component: () => import('pages/RoleCE.vue'),
+          }
+        ],
+      },
     ],
   },
 

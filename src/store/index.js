@@ -5,6 +5,7 @@ import app from './app'
 import dic from './dic'
 import profile from './profile'
 import perm from './perm'
+import role from './role'
 
 /*
  * If not building with SSR mode, you can
@@ -22,6 +23,7 @@ export default store(function (/* { ssrContext } */) {
       dic,
       profile,
       perm,
+      role,
     },
 
     // enable strict mode (adds overhead!)

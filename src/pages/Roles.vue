@@ -1,11 +1,44 @@
 <template>
   <div>
-    <ac-page-toolbar>
-      <ac-page-title>Roles</ac-page-title>
-    </ac-page-toolbar>
+    <div :class="{'hidden': $route.meta.rid !== rid}">
+      <div class="text-right">
+        <q-btn unelevated icon="add" label="Add" color="positive" @click="onAddClick"/>
+      </div>
 
-    <div class="text-center">
-      hello
+      <div class="q-pt-md"/>
+
+      <List @item-click="onItemClick" ref="listComponent"/>
     </div>
+
+    <router-view/>
   </div>
 </template>
+
+<script setup>
+import List from 'components/role/List'
+import { useRoute, useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
+
+const router = useRouter()
+const route = useRoute()
+
+const props = defineProps({
+  rid: {},
+})
+
+const listComponent = ref()
+
+const onItemClick = item => {
+  router.push({ name: 'roles-role_ce', params: { role_id: item.id } })
+}
+
+const onAddClick = () => {
+  router.push({ name: 'roles-role_ce' })
+}
+
+watch(() => route.meta.rid, () => {
+  if (props.rid === route.meta.rid) {
+    listComponent.value.refresh()
+  }
+})
+</script>
