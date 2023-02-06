@@ -32,10 +32,7 @@ const appError = computed(() => store.state.app.appError)
 onMounted(() => {
   store.commit('app/addLoading')
 
-  Promise.all([
-    store.dispatch('profile/refreshSinceAppStart'),
-    store.dispatch('dic/get'),
-  ]).catch(err => {
+  store.dispatch('profile/refreshSinceAppStart').catch(err => {
     console.error('Fail to start app', err)
     store.commit('app/setAppError', cns.ServiceNotAvailable)
   }).then(() => {

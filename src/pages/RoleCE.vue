@@ -33,7 +33,7 @@
                            v-model="data.name"/>
                 </div>
 
-                <!-- perms -->
+                <!-- selected-perms -->
                 <div class="col-12 col-md-6">
                   <ac-section-title>Selected permissions</ac-section-title>
 
@@ -43,7 +43,7 @@
                                  style="height: 300px"
                                  class="br1">
                     <q-list separator dense>
-                      <q-item v-for="perm in data.perms" :key="`role-perm-${perm}`" clickable>
+                      <q-item v-for="perm in data.perms" :key="`role-perm-${perm}`">
                         <q-item-section>
                           {{ perm }}
                         </q-item-section>
@@ -52,8 +52,8 @@
                   </q-scroll-area>
                 </div>
 
-                <!-- perms -->
-                <div class="col-12 col-md-6">
+                <!-- all-perms -->
+                <div v-if="!data.is_system" class="col-12 col-md-6">
                   <ac-section-title>All permissions</ac-section-title>
 
                   <q-scroll-area visible
@@ -62,13 +62,20 @@
                                  style="height: 300px"
                                  class="br1">
                     <q-list separator dense>
-                      <q-item v-for="p in perms" :key="`perm-${p.id}`" tag="label" clickable>
+                      <q-item v-for="p in perms" :key="`perm-${p.id}`" tag="label" clickable
+                              :disable="permsAll && p.id !== $cns.PermAll">
                         <q-item-section side>
-                          <q-checkbox dense v-model="data.perms" :val="p.id" />
+                          <q-checkbox dense :model-value="data.perms" :val="p.id"
+                                      :disable="permsAll && p.id !== $cns.PermAll"
+                                      @update:model-value="onPermsInput" />
                         </q-item-section>
 
-                        <q-item-section @dragstart="onItemStartDrag">
+                        <q-item-section>
                           {{ p.id }}
+                        </q-item-section>
+
+                        <q-item-section v-if="p.is_system" side>
+                          system
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -105,11 +112,13 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n/index'
+import { cns } from 'boot/cns'
 
 const route = useRoute()
 const router = useRouter()
@@ -131,6 +140,7 @@ const data = ref({
   name: '',
   perms: [],
 })
+const permsAll = computed(() => !!_.find(data.value.perms, x => x === cns.PermAll))
 
 const fetch = () => {
   loading.value = true
@@ -156,6 +166,13 @@ const fetchPerms = async () => {
   return store.dispatch('perm/list').then(resp => {
     perms.value = resp.data
   })
+}
+
+const onPermsInput = v => {
+  if (_.find(v, x => x === cns.PermAll)) {
+    v = [cns.PermAll]
+  }
+  data.value.perms = v
 }
 
 const onSubmitClick = () => {
