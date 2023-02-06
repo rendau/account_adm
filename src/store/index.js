@@ -4,6 +4,7 @@ import { createStore } from 'vuex'
 import app from './app'
 import dic from './dic'
 import profile from './profile'
+import application from './application'
 import perm from './perm'
 import role from './role'
 
@@ -22,6 +23,7 @@ export default store(function (/* { ssrContext } */) {
       app,
       dic,
       profile,
+      application,
       perm,
       role,
     },
