@@ -13,9 +13,7 @@ export function refresh ({ state, dispatch }, nr401 = false) {
 export function refreshSinceAppStart ({ dispatch }) {
   if (!ctxLoadSinceAppStartPr) {
     console.log('start refresh-profile since app-start')
-    ctxLoadSinceAppStartPr = dispatch('refresh', true).then(() => {
-      // return dispatch('dic/get', null, { root: true })
-    }, err => {
+    ctxLoadSinceAppStartPr = dispatch('refresh', true).catch(err => {
       if (err.data?.code === cns.ErrNotAuthorized) {
         return Promise.resolve(null)
       } else {

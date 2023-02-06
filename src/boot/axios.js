@@ -29,8 +29,11 @@ function irRepError (err) {
   if (!err) {
     err = {}
   }
-  if (err.response?.status === 401) {
-    err.response.data = { error_code: cns.ErrNotAuthorized }
+  const apiErrAttr = 'error_code'
+  if (err.response?.data?.[apiErrAttr] === cns.ErrNotAuthorized) {
+    err.response.status = 401
+  } else if (err.response?.status === 401) {
+    err.response.data = { [apiErrAttr]: cns.ErrNotAuthorized }
   }
   return Promise.reject({
     config: err.config,
@@ -45,19 +48,28 @@ function irRepNotAuthorized (err, axiosInstance) {
     let oConfig = err.config
     let nr401 = oConfig.nr401 === true
     let nfa = oConfig.nfa === true
+    let noLogout = oConfig.nl === true
 
     if (axiosInstance && !nfa) {
       return _store.dispatch('profile/refreshAccessToken').then(aToken => {
         oConfig.nfa = true
         return axiosInstance.request(oConfig)
       }, sErr => {
-        if (sErr.response?.status !== 401 && sErr.data?.code !== cns.ErrNotAuthorized) {
+        if (sErr.response?.status !== 401) {
           console.error('fail to refresh access token', sErr)
         }
-        return logout(err, nr401).then(() => Promise.reject(err))
+        if (!noLogout) {
+          return logout(err, nr401).then(() => Promise.reject(err))
+        } else {
+          return Promise.reject(err)
+        }
       })
     } else {
-      return logout(err, nr401).then(() => Promise.reject(err))
+      if (!noLogout) {
+        return logout(err, nr401).then(() => Promise.reject(err))
+      } else {
+        return Promise.reject(err)
+      }
     }
   }
 
@@ -76,11 +88,17 @@ function logout (err, noRedirect = false) {
 function transformErr (data) { // returns custom (for app) error
   const apiErrAttr = 'error_code'
   if (data && data[apiErrAttr]) {
-    return _.assign(
+    let res = _.assign(
       _.omit(data, [apiErrAttr]),
       { code: data[apiErrAttr] },
       { desc: i18nCtx.i18n.global.t(`api_err.${data[apiErrAttr]}`) || i18nCtx.i18n.global.t(cns.ErrSystem) },
     )
+
+    if (res.fields && _.isObject(res.fields)) {
+      res.fields = _.mapValues(res.fields, eCode => i18nCtx.i18n.global.t(`api_err.${eCode}`))
+    }
+
+    return res
   }
   return {
     code: cns.ErrSystem,
