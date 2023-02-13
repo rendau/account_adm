@@ -7,13 +7,15 @@ export function get (ctx, id) {
 }
 
 export function save (ctx, { id, data }) {
+  let pr
   if (!id) {
-    return this.$api.post(`app`, data)
+    pr = this.$api.post(`app`, data)
   } else {
-    return this.$api.put(`app/${id}`, data)
+    pr = this.$api.put(`app/${id}`, data)
   }
+  return pr.then(resp => ctx.dispatch('dic/getDic', null, { root: true }).then(() => resp))
 }
 
 export function remove (ctx, id) {
-  return this.$api.delete(`app/${id}`)
+  return this.$api.delete(`app/${id}`).then(resp => ctx.dispatch('dic/getDic', null, { root: true }).then(() => resp))
 }

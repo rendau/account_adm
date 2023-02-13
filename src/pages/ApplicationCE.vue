@@ -78,7 +78,7 @@ const props = defineProps({
   rid: {},
 })
 
-const id = computed(() => (route.params.application_id || ''))
+const id = computed(() => (parseInt(route.params.application_id) || 0))
 const isCreating = computed(() => !id.value)
 const loading = ref(false)
 const data = ref({

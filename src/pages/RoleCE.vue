@@ -130,7 +130,7 @@ const props = defineProps({
   rid: {},
 })
 
-const id = computed(() => (route.params.role_id || ''))
+const id = computed(() => (parseInt(route.params.role_id) || 0))
 const isCreating = computed(() => !id.value)
 const loading = ref(false)
 const perms = ref([])

@@ -13,28 +13,21 @@
       </thead>
 
       <tbody>
-      <ListItem v-for="item in results.results" :key="`item-${item.id}`"
+      <ListItem v-for="item in results" :key="`item-${item.id}`"
                 :data="item" @click="$emit('item-click', item)"/>
 
-      <ac-tr-no-rows v-if="!loading && !results.results?.length"/>
+      <ac-tr-no-rows v-if="!results.length"/>
       </tbody>
-
-      <ac-spinner :showing="loading"/>
     </q-markup-table>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-
-import list from 'src/composables/list'
+import { computed } from 'vue'
 import ListItem from './ListItem'
+import { useStore } from 'vuex'
 
-const { loading, results, refresh } = list('application/list')
+const store = useStore()
 
-onMounted(refresh)
-
-defineExpose({
-  refresh,
-})
+const results = computed(() => store.state.dic.apps)
 </script>
