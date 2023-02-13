@@ -32,6 +32,11 @@ const menus = computed(() => [
     route: { name: 'roles' },
   },
   {
+    label: 'Applications',
+    icon: 'grid_view',
+    route: { name: 'applications' },
+  },
+  {
     label: 'Permissions',
     icon: 'fitbit',
     route: { name: 'perms' },

@@ -40,6 +40,18 @@ const routes = [
         component: () => import('pages/Roles.vue'),
       },
       {
+        path: 'applications',
+        name: 'applications',
+        component: () => import('pages/Applications.vue'),
+        children: [
+          {
+            path: 'ce/:application_id?',
+            name: 'applications-application_ce',
+            component: () => import('pages/ApplicationCE.vue'),
+          }
+        ],
+      },
+      {
         path: 'perms',
         name: 'perms',
         component: () => import('pages/Perms.vue'),
@@ -48,7 +60,7 @@ const routes = [
             path: 'ce/:perm_id?',
             name: 'perms-perm_ce',
             component: () => import('pages/PermCE.vue'),
-          }
+          },
         ],
       },
       {
@@ -60,7 +72,7 @@ const routes = [
             path: 'ce/:role_id?',
             name: 'roles-role_ce',
             component: () => import('pages/RoleCE.vue'),
-          }
+          },
         ],
       },
     ],
