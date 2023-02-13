@@ -86,7 +86,7 @@ const props = defineProps({
   rid: {},
 })
 
-const id = computed(() => (route.params.perm_id || ''))
+const id = computed(() => (parseInt(route.params.perm_id) || 0))
 const isCreating = computed(() => !id.value)
 const loading = ref(false)
 const data = ref({

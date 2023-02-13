@@ -17,16 +17,8 @@
                   System
                 </div>
 
-                <!-- id -->
-                <div class="col-12 col-md-6">
-                  <q-input outlined
-                           :readonly="data.is_system"
-                           label="ID"
-                           v-model="data.id"/>
-                </div>
-
                 <!-- name -->
-                <div class="col-12 col-md-6">
+                <div class="col-12">
                   <q-input outlined
                            :readonly="data.is_system"
                            label="Name"
@@ -135,7 +127,6 @@ const isCreating = computed(() => !id.value)
 const loading = ref(false)
 const perms = ref([])
 const data = ref({
-  id: '',
   is_system: false,
   name: '',
   perms: [],

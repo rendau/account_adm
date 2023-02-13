@@ -4,8 +4,6 @@
     <q-markup-table flat bordered wrap-cells class="relative-position">
       <thead class="dense">
       <tr class="bg-grey-2 text-grey-6">
-        <th class="min-width">ID</th>
-
         <th class="text-left">Name</th>
 
         <th class="min-width text-no-wrap">Is System</th>
@@ -16,25 +14,18 @@
       <ListItem v-for="item in results" :key="`item-${item.id}`"
                 :data="item" @click="$emit('item-click', item)"/>
 
-      <ac-tr-no-rows v-if="!loading && !results.length"/>
+      <ac-tr-no-rows v-if="!results.length"/>
       </tbody>
-
-      <ac-spinner :showing="loading"/>
     </q-markup-table>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-
-import list from 'src/composables/list'
+import { computed } from 'vue'
 import ListItem from './ListItem'
+import { useStore } from 'vuex'
 
-const { loading, results, refresh } = list('role/list')
+const store = useStore()
 
-onMounted(refresh)
-
-defineExpose({
-  refresh,
-})
+const results = computed(() => store.state.dic.roles)
 </script>
