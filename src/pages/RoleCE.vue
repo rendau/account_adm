@@ -13,14 +13,14 @@
             <div class="col-12 col-md-10 col-lg-6">
               <div class="row items-start q-col-gutter-md">
                 <!-- active -->
-                <div v-if="data.is_system" class="col-12 text-negative">
+                <div v-if="!enabled" class="col-12 text-negative">
                   System
                 </div>
 
                 <!-- name -->
                 <div class="col-12">
                   <q-input outlined
-                           :readonly="data.is_system"
+                           :readonly="!enabled"
                            label="Name"
                            v-model="data.name"/>
                 </div>
@@ -45,7 +45,7 @@
                 </div>
 
                 <!-- all-perms -->
-                <div v-if="!data.is_system" class="col-12 col-md-6">
+                <div v-if="enabled" class="col-12 col-md-6">
                   <ac-section-title>All permissions</ac-section-title>
 
                   <q-scroll-area visible
@@ -75,7 +75,7 @@
                 </div>
               </div>
 
-              <template v-if="!data.is_system">
+              <template v-if="enabled">
                 <div class="q-pt-lg q-pb-md"/>
 
                 <div class="row items-center q-gutter-x-md">
@@ -127,10 +127,10 @@ const isCreating = computed(() => !id.value)
 const loading = ref(false)
 const perms = ref([])
 const data = ref({
-  is_system: false,
   name: '',
   perms: [],
 })
+const enabled = computed(() => !data.value.is_system)
 const permsAll = computed(() => !!_.find(data.value.perms, x => x === cns.PermAll))
 
 const fetch = () => {

@@ -17,20 +17,21 @@
                   System
                 </div>
 
-                <!-- id -->
+                <!-- code -->
                 <div class="col-12 col-md-6">
                   <q-input outlined
                            :readonly="data.is_system"
-                           label="ID"
-                           v-model="data.id"/>
+                           label="Code"
+                           v-model="data.code"/>
                 </div>
 
-                <!-- app -->
+                <!-- app_id -->
                 <div class="col-12 col-md-6">
-                  <q-input outlined
-                           :readonly="data.is_system"
-                           label="Application"
-                           v-model="data.app"/>
+                  <q-select options-dense outlined map-options emit-value
+                            label="App"
+                            :readonly="data.is_system"
+                            v-model="data.app_id"
+                            :options="appOps"/>
                 </div>
 
                 <!-- dsc -->
@@ -75,6 +76,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n/index'
+import { util } from 'boot/util'
 
 const route = useRoute()
 const router = useRouter()
@@ -90,11 +92,19 @@ const id = computed(() => (parseInt(route.params.perm_id) || 0))
 const isCreating = computed(() => !id.value)
 const loading = ref(false)
 const data = ref({
-  id: '',
-  app: '',
-  is_system: false,
+  code: '',
+  app_id: null,
   dsc: '',
+  is_system: false,
 })
+const apps = computed(() => {
+  let res = store.state.dic.apps
+  if (!data.value.is_system) {
+    return _.reject(res, { is_account_app: true })
+  }
+  return res
+})
+const appOps = computed(() => util.lOps(apps.value))
 
 const fetch = () => {
   if (isCreating.value) return
