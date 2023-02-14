@@ -4,6 +4,8 @@
     <q-markup-table flat bordered wrap-cells class="relative-position">
       <thead class="dense">
       <tr class="bg-grey-2 text-grey-6">
+        <th class="min-width text-center">Code</th>
+
         <th class="text-left">Name</th>
 
         <th class="min-width text-no-wrap">Is System</th>
