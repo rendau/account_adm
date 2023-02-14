@@ -13,6 +13,10 @@
     </td>
 
     <td class="text-no-wrap text-center">
+      {{ data.is_all ? 'Yes': '' }}
+    </td>
+
+    <td class="text-no-wrap text-center">
       {{ data.is_system ? 'Yes': '' }}
     </td>
   </tr>

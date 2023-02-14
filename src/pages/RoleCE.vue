@@ -77,7 +77,7 @@
                                  :thumb-style="$u.verScrollBarStyle().thumb"
                                  :bar-style="$u.verScrollBarStyle().bar"
                                  style="height: 300px"
-                                 class="br1">
+                                 class="br1 rounded-borders">
                     <q-list separator dense>
                       <template v-for="app in permApps">
                         <q-item-label class="text-caption q-pl-sm q-pt-sm">
@@ -85,10 +85,10 @@
                         </q-item-label>
 
                         <q-item v-for="p in app.perms" :key="`perm-${p.id}`"
-                                tag="label" clickable :disable="app.hasAllPerm && p.code !== $cns.PermAll">
+                                tag="label" clickable :disable="app.hasAllPerm && !p.is_all">
                           <q-item-section side>
                             <q-checkbox dense :model-value="data.perm_ids" :val="p.id"
-                                        :disable="app.hasAllPerm && p.code !== $cns.PermAll"
+                                        :disable="app.hasAllPerm && !p.is_all"
                                         @update:model-value="onPermsInput"/>
                           </q-item-section>
 
@@ -182,7 +182,7 @@ const selectedPermApps = computed(() => {
     let filteredPerms = _.filter(app.perms, p => _.find(data.value.perm_ids, x => x === p.id))
     return _.assign({}, app, {
       perms: filteredPerms,
-      hasAllPerm: !!_.find(filteredPerms, { code: cns.PermAll }),
+      hasAllPerm: !!_.find(filteredPerms, { is_all: true }),
     })
   }), x => x.perms.length > 0)
 })
@@ -216,7 +216,7 @@ const fetchPerms = async () => {
 
 const onPermsInput = v => {
   let prs = _.map(v, id => _.find(perms.value, { id }))
-  _.each(_.filter(prs, { code: cns.PermAll }), p => {
+  _.each(_.filter(prs, { is_all: true }), p => {
     prs = _.reject(prs, x => x.app_id === p.app_id && x.id !== p.id)
   })
   data.value.perm_ids = _.map(prs, 'id')

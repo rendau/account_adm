@@ -17,6 +17,17 @@
                   System
                 </div>
 
+                <!-- app_id -->
+                <div class="col-12 col-md-6">
+                  <q-select options-dense outlined map-options emit-value
+                            label="App"
+                            :readonly="data.is_system"
+                            v-model="data.app_id"
+                            :options="appOps"/>
+                </div>
+
+                <div class="gt-sm col-6"/>
+
                 <!-- code -->
                 <div class="col-12 col-md-6">
                   <q-input outlined
@@ -25,13 +36,11 @@
                            v-model="data.code"/>
                 </div>
 
-                <!-- app_id -->
+                <!-- is_all -->
                 <div class="col-12 col-md-6">
-                  <q-select options-dense outlined map-options emit-value
-                            label="App"
-                            :readonly="data.is_system"
-                            v-model="data.app_id"
-                            :options="appOps"/>
+                  <q-toggle :disable="data.is_system"
+                            label="Is All"
+                            v-model="data.is_all"/>
                 </div>
 
                 <!-- dsc -->
@@ -93,6 +102,7 @@ const isCreating = computed(() => !id.value)
 const loading = ref(false)
 const data = ref({
   code: '',
+  is_all: false,
   app_id: null,
   dsc: '',
   is_system: false,

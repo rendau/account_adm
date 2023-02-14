@@ -16,8 +16,6 @@ const cns = {
   PermissionDenied: 'permission_denied',
   ErrFormValidate: 'form_validate',
 
-  PermAll: '*',
-
   authRouteName: 'auth',
 }
 
