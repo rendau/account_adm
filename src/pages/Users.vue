@@ -7,7 +7,7 @@
 
       <div class="q-pt-md"/>
 
-      <List @item-click="onItemClick"/>
+      <List @item-click="onItemClick" ref="listComponent"/>
     </div>
 
     <router-view/>
@@ -16,13 +16,17 @@
 
 <script setup>
 import List from 'components/user/List'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
 
 const router = useRouter()
+const route = useRoute()
 
 const props = defineProps({
   rid: {},
 })
+
+const listComponent = ref()
 
 const onItemClick = item => {
   router.push({ name: 'users-user_ce', params: { user_id: item.id } })
@@ -31,4 +35,10 @@ const onItemClick = item => {
 const onAddClick = () => {
   router.push({ name: 'users-user_ce' })
 }
+
+watch(() => route.meta.rid, () => {
+  if (props.rid === route.meta.rid) {
+    listComponent.value.refresh()
+  }
+})
 </script>

@@ -42,7 +42,7 @@
                                  :thumb-style="$u.verScrollBarStyle().thumb"
                                  :bar-style="$u.verScrollBarStyle().bar"
                                  style="height: 300px"
-                                 class="br1 rounded-borders">
+                                 class="br1 rounded-borders q-py-xs">
                     <q-list separator dense>
                       <template v-for="app in selectedPermApps">
                         <q-item-label class="text-caption q-pl-sm q-pt-sm">
@@ -77,7 +77,7 @@
                                  :thumb-style="$u.verScrollBarStyle().thumb"
                                  :bar-style="$u.verScrollBarStyle().bar"
                                  style="height: 300px"
-                                 class="br1 rounded-borders">
+                                 class="br1 rounded-borders q-py-xs">
                     <q-list separator dense>
                       <template v-for="app in permApps">
                         <q-item-label class="text-caption q-pl-sm q-pt-sm">

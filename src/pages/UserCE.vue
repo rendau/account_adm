@@ -5,7 +5,7 @@
         <!-- toolbar -->
         <ac-page-toolbar bb>
           <ac-page-title>
-            {{ id ? 'Role' : 'Create role' }}
+            {{ id ? 'User' : 'Create user' }}
           </ac-page-title>
         </ac-page-toolbar>
 
@@ -18,12 +18,17 @@
                   System
                 </div>
 
-                <!-- code -->
+                <!-- phone -->
                 <div class="col-12 col-md-4">
                   <q-input outlined
                            :readonly="!enabled"
-                           label="Code"
-                           v-model="data.code"/>
+                           type="tel"
+                           label="Phone"
+                           v-model="data.phone"
+                           mask="# (###) ### ####"
+                           unmasked-value
+                           prefix="+"
+                           :disable="loading"/>
                 </div>
 
                 <!-- name -->
@@ -34,42 +39,32 @@
                            v-model="data.name"/>
                 </div>
 
-                <!-- selected-perms -->
+                <!-- selected-roles -->
                 <div class="col-12 col-md-6">
-                  <ac-section-title>Selected permissions</ac-section-title>
+                  <ac-section-title>Selected roles</ac-section-title>
 
                   <q-scroll-area visible
                                  :thumb-style="$u.verScrollBarStyle().thumb"
                                  :bar-style="$u.verScrollBarStyle().bar"
                                  style="height: 300px"
-                                 class="br1 rounded-borders">
+                                 class="br1 rounded-borders q-py-xs">
                     <q-list separator dense>
-                      <template v-for="app in selectedPermApps">
-                        <q-item-label class="text-caption q-pl-sm q-pt-sm">
-                          {{ app.name }}
-                        </q-item-label>
+                      <q-item v-for="r in selectedRoles" :key="`role-${r.id}`">
+                        <q-item-section>
+                          <div class="text-weight-medium">
+                            {{ r.name }}
+                          </div>
+                        </q-item-section>
 
-                        <q-item v-for="p in app.perms" :key="`perm-${p.id}`">
-                          <q-item-section>
-                            <div class="text-weight-medium">
-                              {{ p.code }}
-                            </div>
-
-                            <div v-if="p.dsc" class="text-caption text-grey-6">
-                              {{ p.dsc }}
-                            </div>
-                          </q-item-section>
-
-                          <q-item-section v-if="p.is_system" side class="text-caption">
-                            system
-                          </q-item-section>
-                        </q-item>
-                      </template>
+                        <q-item-section v-if="r.is_system" side class="text-caption">
+                          system
+                        </q-item-section>
+                      </q-item>
                     </q-list>
                   </q-scroll-area>
                 </div>
 
-                <!-- all-perms -->
+                <!-- all-roles -->
                 <div v-if="enabled" class="col-12 col-md-6">
                   <ac-section-title>All permissions</ac-section-title>
 
@@ -77,36 +72,24 @@
                                  :thumb-style="$u.verScrollBarStyle().thumb"
                                  :bar-style="$u.verScrollBarStyle().bar"
                                  style="height: 300px"
-                                 class="br1 rounded-borders">
+                                 class="br1 rounded-borders q-py-xs">
                     <q-list separator dense>
-                      <template v-for="app in permApps">
-                        <q-item-label class="text-caption q-pl-sm q-pt-sm">
-                          {{ app.name }}
-                        </q-item-label>
+                      <q-item v-for="r in roles" :key="`role-${r.id}`"
+                              tag="label" clickable>
+                        <q-item-section side>
+                          <q-checkbox dense v-model="data.role_ids" :val="r.id"/>
+                        </q-item-section>
 
-                        <q-item v-for="p in app.perms" :key="`perm-${p.id}`"
-                                tag="label" clickable :disable="app.hasAllPerm && !p.is_all">
-                          <q-item-section side>
-                            <q-checkbox dense :model-value="data.perm_ids" :val="p.id"
-                                        :disable="app.hasAllPerm && !p.is_all"
-                                        @update:model-value="onPermsInput"/>
-                          </q-item-section>
+                        <q-item-section>
+                          <div class="text-weight-medium">
+                            {{ r.name }}
+                          </div>
+                        </q-item-section>
 
-                          <q-item-section>
-                            <div class="text-weight-medium">
-                              {{ p.code }}
-                            </div>
-
-                            <div v-if="p.dsc" class="text-caption text-grey-6">
-                              {{ p.dsc }}
-                            </div>
-                          </q-item-section>
-
-                          <q-item-section v-if="p.is_system" side class="text-caption">
-                            system
-                          </q-item-section>
-                        </q-item>
-                      </template>
+                        <q-item-section v-if="r.is_system" side class="text-caption">
+                          system
+                        </q-item-section>
+                      </q-item>
                     </q-list>
                   </q-scroll-area>
                 </div>
@@ -148,7 +131,6 @@ import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n/index'
-import { cns } from 'boot/cns'
 
 const route = useRoute()
 const router = useRouter()
@@ -160,71 +142,34 @@ const props = defineProps({
   rid: {},
 })
 
-const id = computed(() => (parseInt(route.params.role_id) || 0))
+const id = computed(() => (parseInt(route.params.user_id) || 0))
 const isCreating = computed(() => !id.value)
 const loading = ref(false)
-const perms = ref([])
+const roles = computed(() => store.state.dic.roles)
 const data = ref({
-  code: '',
+  phone: '',
   name: '',
-  perm_ids: [],
+  ava: '',
+  role_ids: [],
 })
-
-const permApps = computed(() => {
-  return _.map(_.uniq(_.map(perms.value, 'app_id')), id => {
-    return _.assign({}, _.find(store.state.dic.apps, { id }) || {}, {
-      perms: _.filter(perms.value, { app_id: id }),
-    })
-  })
-})
-const selectedPermApps = computed(() => {
-  return _.filter(_.map(permApps.value, app => {
-    let filteredPerms = _.filter(app.perms, p => _.find(data.value.perm_ids, x => x === p.id))
-    return _.assign({}, app, {
-      perms: filteredPerms,
-      hasAllPerm: !!_.find(filteredPerms, { is_all: true }),
-    })
-  }), x => x.perms.length > 0)
-})
-const enabled = computed(() => !data.value.is_system)
+const enabled = computed(() => true)
+const selectedRoles = computed(() => _.filter(roles.value, r => _.includes(data.value.role_ids, r.id)))
 
 const fetch = () => {
-  loading.value = true
-  Promise.all([
-    fetchData(),
-    fetchPerms(),
-  ]).catch(err => {
+  if (isCreating.value) return
+
+  store.dispatch('user/get', id.value).then(resp => {
+    data.value = resp.data
+  }, err => {
     $q.notify({ type: 'negative', message: err.data.desc })
   }).then(() => {
     loading.value = false
   })
 }
 
-const fetchData = async () => {
-  if (isCreating.value) return
-
-  return store.dispatch('role/get', id.value).then(resp => {
-    data.value = resp.data
-  })
-}
-
-const fetchPerms = async () => {
-  return store.dispatch('perm/list').then(resp => {
-    perms.value = resp.data
-  })
-}
-
-const onPermsInput = v => {
-  let prs = _.map(v, id => _.find(perms.value, { id }))
-  _.each(_.filter(prs, { is_all: true }), p => {
-    prs = _.reject(prs, x => x.app_id === p.app_id && x.id !== p.id)
-  })
-  data.value.perm_ids = _.map(prs, 'id')
-}
-
 const onSubmitClick = () => {
   loading.value = true
-  store.dispatch('role/save', {
+  store.dispatch('user/save', {
     id: id.value,
     data: data.value,
   }).then(() => {
@@ -239,12 +184,12 @@ const onSubmitClick = () => {
 
 const onDeleteClick = () => {
   $q.dialog({
-    message: 'Are you sure you want to delete the role?',
+    message: 'Are you sure you want to delete the user?',
     ok: { label: 'Yes', noCaps: true },
     cancel: { label: 'Cancel', flat: true, noCaps: true },
   }).onOk(() => {
     loading.value = true
-    store.dispatch('role/remove', id.value).then(() => {
+    store.dispatch('user/remove', id.value).then(() => {
       $q.notify({ type: 'positive', message: t('success_perform_msg') })
       router.back()
     }, err => {

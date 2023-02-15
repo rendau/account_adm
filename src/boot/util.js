@@ -38,8 +38,8 @@ let util = {
   },
   fmtPhone (v) {
     if (!v) return ''
-    // return v.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '$1 ($2) $3-$4')
-    return v.replace(/(\d{3})(\d{3})(\d{4})/, '+7 $1 $2 $3')
+    return v.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '+$1 ($2) $3-$4')
+    // return v.replace(/(\d{3})(\d{3})(\d{4})/, '+7 $1 $2 $3')
   },
   fmtNum (v, ext, vIfNil) {
     if (_.isNil(v)) return vIfNil || 0
@@ -94,7 +94,7 @@ let util = {
       thumb: {
         width: '8px',
         'border-radius': '4px',
-        'background-color': '#a76301',
+        'background-color': '#5780d9',
         opacity: 1,
       },
     }

@@ -18,7 +18,7 @@ const cns = {
 
   authRouteName: 'auth',
 
-  DefaultPageSize: 20,
+  DefaultPageSize: 10,
 }
 
 cns.ApiUrl = window.API_URL || cns.ApiUrl
