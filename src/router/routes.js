@@ -33,11 +33,25 @@ const routes = [
         path: 'users',
         name: 'users',
         component: () => import('pages/Users.vue'),
+        children: [
+          {
+            path: 'ce/:user_id?',
+            name: 'users-user_ce',
+            component: () => import('pages/UserCE.vue'),
+          },
+        ],
       },
       {
         path: 'roles',
         name: 'roles',
         component: () => import('pages/Roles.vue'),
+        children: [
+          {
+            path: 'ce/:role_id?',
+            name: 'roles-role_ce',
+            component: () => import('pages/RoleCE.vue'),
+          },
+        ],
       },
       {
         path: 'applications',
@@ -60,18 +74,6 @@ const routes = [
             path: 'ce/:perm_id?',
             name: 'perms-perm_ce',
             component: () => import('pages/PermCE.vue'),
-          },
-        ],
-      },
-      {
-        path: 'roles',
-        name: 'roles',
-        component: () => import('pages/Roles.vue'),
-        children: [
-          {
-            path: 'ce/:role_id?',
-            name: 'roles-role_ce',
-            component: () => import('pages/RoleCE.vue'),
           },
         ],
       },

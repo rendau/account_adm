@@ -17,6 +17,8 @@ const cns = {
   ErrFormValidate: 'form_validate',
 
   authRouteName: 'auth',
+
+  DefaultPageSize: 20,
 }
 
 cns.ApiUrl = window.API_URL || cns.ApiUrl
