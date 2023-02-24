@@ -13,11 +13,6 @@
           <div v-if="!loading && data" class="row">
             <div class="col-12 col-md-10 col-lg-6">
               <div class="row items-start q-col-gutter-md">
-                <!-- system -->
-                <div v-if="!enabled" class="col-12 text-negative">
-                  System
-                </div>
-
                 <!-- phone -->
                 <div class="col-12 col-md-4">
                   <q-input outlined
@@ -66,7 +61,7 @@
 
                 <!-- all-roles -->
                 <div v-if="enabled" class="col-12 col-md-6">
-                  <ac-section-title>All permissions</ac-section-title>
+                  <ac-section-title>All roles</ac-section-title>
 
                   <q-scroll-area visible
                                  :thumb-style="$u.verScrollBarStyle().thumb"
@@ -74,7 +69,7 @@
                                  style="height: 300px"
                                  class="br1 rounded-borders q-py-xs">
                     <q-list separator dense>
-                      <q-item v-for="r in roles" :key="`role-${r.id}`"
+                      <q-item v-for="r in filteredRoles" :key="`role-${r.id}`"
                               tag="label" clickable>
                         <q-item-section side>
                           <q-checkbox dense v-model="data.role_ids" :val="r.id"/>
@@ -131,6 +126,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n/index'
+import { cns } from 'boot/cns'
 
 const route = useRoute()
 const router = useRouter()
@@ -152,8 +148,17 @@ const data = ref({
   ava: '',
   role_ids: [],
 })
-const enabled = computed(() => true)
+const filteredRoles = computed(() => {
+  if (!store.getters['profile/isSAdmin']) {
+    return _.reject(roles.value, x => x.code === cns.RoleCodeSuperAdmin)
+  }
+  return roles.value
+})
 const selectedRoles = computed(() => _.filter(roles.value, r => _.includes(data.value.role_ids, r.id)))
+const enabled = computed(() => {
+  if (isCreating.value) return true
+  return store.getters['profile/isSAdmin'] || !_.find(selectedRoles.value, x => x.code === cns.RoleCodeSuperAdmin)
+})
 
 const fetch = () => {
   if (isCreating.value) return

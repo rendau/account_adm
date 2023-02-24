@@ -25,6 +25,8 @@ const cns = {
   PermMPerm: 'acc:m_perm',
   PermMRole: 'acc:m_role',
   PermMUsr: 'acc:m_usr',
+
+  RoleCodeSuperAdmin: 'acc:super_admin',
 }
 
 cns.ApiUrl = window.API_URL || cns.ApiUrl
