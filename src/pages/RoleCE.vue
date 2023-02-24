@@ -79,7 +79,7 @@
                                  style="height: 300px"
                                  class="br1 rounded-borders q-py-xs">
                     <q-list separator dense>
-                      <template v-for="app in permApps">
+                      <template v-for="app in filteredPermApps">
                         <q-item-label class="text-caption q-pl-sm q-pt-sm">
                           {{ app.name }}
                         </q-item-label>
@@ -176,6 +176,9 @@ const permApps = computed(() => {
       perms: _.filter(perms.value, { app_id: id }),
     })
   })
+})
+const filteredPermApps = computed(() => {
+  return _.reject(permApps.value, 'is_account_app')
 })
 const selectedPermApps = computed(() => {
   return _.filter(_.map(permApps.value, app => {

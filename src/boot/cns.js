@@ -19,6 +19,12 @@ const cns = {
   authRouteName: 'auth',
 
   DefaultPageSize: 10,
+
+  PermAll: 'acc:*',
+  PermMApp: 'acc:m_app',
+  PermMPerm: 'acc:m_perm',
+  PermMRole: 'acc:m_role',
+  PermMUsr: 'acc:m_usr',
 }
 
 cns.ApiUrl = window.API_URL || cns.ApiUrl

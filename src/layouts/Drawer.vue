@@ -18,28 +18,35 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { cns } from 'boot/cns'
 
-const menus = computed(() => [
-  {
+const store = useStore()
+
+const hasPerm = store.getters['profile/hasPerm']
+
+const menus = computed(() => _.reject([
+  hasPerm(cns.PermMUsr) && {
     label: 'Users',
     icon: 'people',
     route: { name: 'users' },
   },
-  {
+  hasPerm(cns.PermMRole) && {
     label: 'Roles',
     icon: 'corporate_fare',
     route: { name: 'roles' },
   },
-  {
-    label: 'Applications',
-    icon: 'grid_view',
-    route: { name: 'applications' },
-  },
-  {
+  hasPerm(cns.PermMPerm) && {
     label: 'Permissions',
     icon: 'fitbit',
     route: { name: 'perms' },
   },
-])
+  hasPerm(cns.PermMApp) && {
+    label: 'Applications',
+    icon: 'grid_view',
+    route: { name: 'applications' },
+  },
+], x => !x))
 </script>
