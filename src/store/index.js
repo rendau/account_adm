@@ -3,6 +3,7 @@ import { createStore } from 'vuex'
 
 import app from './app'
 import dic from './dic'
+import config from './config'
 import profile from './profile'
 import application from './application'
 import perm from './perm'
@@ -23,6 +24,7 @@ export default store(function (/* { ssrContext } */) {
     modules: {
       app,
       dic,
+      config,
       profile,
       application,
       perm,

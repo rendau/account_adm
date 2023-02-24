@@ -70,5 +70,8 @@ export function set (ctx, value) {
 }
 
 export function afterLogin (ctx) {
-  return ctx.dispatch('dic/getDic', null, { root: true })
+  return Promise.all([
+    ctx.dispatch('dic/getDic', null, { root: true }),
+    ctx.dispatch('config/get', null, { root: true }),
+  ])
 }
