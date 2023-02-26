@@ -12,7 +12,8 @@
         <div class="relative-position" style="min-height: 50px">
           <div v-if="!loading && data" class="row">
             <div class="col-12 col-md-10 col-lg-6">
-              <div class="row items-start q-col-gutter-md">
+              <!-- body -->
+              <div class="row items-center q-col-gutter-md">
                 <!-- phone -->
                 <div class="col-12 col-md-4">
                   <q-input outlined
@@ -88,6 +89,60 @@
                     </q-list>
                   </q-scroll-area>
                 </div>
+
+                <!-- customAccessTokenDur -->
+                <div class="col-12 col-md-4 non-selectable">
+                  <q-toggle :model-value="customAccessTokenDur" label="Custom access token duration"
+                            :disable="!$store.getters['profile/isSAdmin']"
+                            @update:model-value="onInputCustomAccessTokenDur"/>
+                </div>
+
+                <!-- access_token_dur_seconds -->
+                <div class="col-12 col-md-4">
+                  <q-input v-if="customAccessTokenDur"
+                           :disable="!$store.getters['profile/isSAdmin']"
+                           outlined type="tel" mask="##########" unmasked-value
+                           label="Access Token Duration"
+                           suffix="sec"
+                           v-model.number="data.access_token_dur_seconds"/>
+                </div>
+
+                <!-- generate and copy new access token -->
+                <div class="col-12 col-md-4 non-selectable">
+                  <q-btn v-if="customAccessTokenDur && !isCreating && $store.getters['profile/isSAdmin']"
+                         dense unelevated no-caps
+                         :loading="creatingAccessToken"
+                         label="get new access token" icon="content_copy"
+                         color="secondary" size=".7rem" class="q-py-sm q-px-xs"
+                         @click="onGetNewAccessTokenClick"/>
+                </div>
+
+                <!-- customRefreshTokenDur -->
+                <div class="col-12 col-md-4 non-selectable">
+                  <q-toggle :model-value="customRefreshTokenDur" label="Custom refresh token duration"
+                            :disable="!$store.getters['profile/isSAdmin']"
+                            @update:model-value="onInputCustomRefreshTokenDur"/>
+                </div>
+
+                <!-- refresh_token_dur_seconds -->
+                <div class="col-12 col-md-4">
+                  <q-input v-if="customRefreshTokenDur"
+                           :disable="!$store.getters['profile/isSAdmin']"
+                           outlined type="tel" mask="##########" unmasked-value
+                           label="Refresh Token Duration"
+                           suffix="sec"
+                           v-model.number="data.refresh_token_dur_seconds"/>
+                </div>
+
+                <!-- generate and copy new refresh token -->
+                <div class="col-12 col-md-4 non-selectable">
+                  <q-btn v-if="customRefreshTokenDur && !isCreating && $store.getters['profile/isSAdmin']"
+                         dense unelevated no-caps
+                         :loading="creatingRefreshToken"
+                         label="get new refresh token" icon="content_copy"
+                         color="secondary" size=".7rem" class="q-py-sm q-px-xs"
+                         @click="onGetNewRefreshTokenClick"/>
+                </div>
               </div>
 
               <!-- actions -->
@@ -124,7 +179,7 @@ import _ from 'lodash'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useQuasar } from 'quasar'
+import { copyToClipboard, useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n/index'
 import { cns } from 'boot/cns'
 
@@ -141,13 +196,19 @@ const props = defineProps({
 const id = computed(() => (parseInt(route.params.user_id) || 0))
 const isCreating = computed(() => !id.value)
 const loading = ref(false)
+const creatingAccessToken = ref(false)
+const creatingRefreshToken = ref(false)
 const roles = computed(() => store.state.dic.roles)
 const data = ref({
   phone: '',
   name: '',
   ava: '',
   role_ids: [],
+  access_token_dur_seconds: 0,
+  refresh_token_dur_seconds: 0,
 })
+const customAccessTokenDur = ref(false)
+const customRefreshTokenDur = ref(false)
 const filteredRoles = computed(() => {
   if (!store.getters['profile/isSAdmin']) {
     return _.reject(roles.value, x => x.code === cns.RoleCodeSuperAdmin)
@@ -165,10 +226,61 @@ const fetch = () => {
 
   store.dispatch('user/get', id.value).then(resp => {
     data.value = resp.data
+    customAccessTokenDur.value = data.value.access_token_dur_seconds > 0
+    customRefreshTokenDur.value = data.value.refresh_token_dur_seconds > 0
   }, err => {
     $q.notify({ type: 'negative', message: err.data.desc })
   }).then(() => {
     loading.value = false
+  })
+}
+
+const onInputCustomAccessTokenDur = v => {
+  customAccessTokenDur.value = v
+  if (!v) {
+    data.value.access_token_dur_seconds = 0
+  }
+}
+
+const onInputCustomRefreshTokenDur = v => {
+  customRefreshTokenDur.value = v
+  if (!v) {
+    data.value.refresh_token_dur_seconds = 0
+  }
+}
+
+const onGetNewAccessTokenClick = () => {
+  creatingAccessToken.value = true
+  store.dispatch('user/save', {
+    id: id.value,
+    data: data.value,
+  }).then(() => {
+    return store.dispatch('user/getNewAccessToken', id.value).then(resp => {
+      return copyToClipboard(resp.data?.token || '').then(() => {
+        $q.notify({ type: 'positive', message: 'Copied to clipboard' })
+      }, err => {
+        $q.notify({ type: 'negative', message: err })
+      })
+    })
+  }, err => {
+    $q.notify({ type: 'negative', message: err.data.desc })
+  }).then(() => {
+    creatingAccessToken.value = false
+  })
+}
+
+const onGetNewRefreshTokenClick = () => {
+  creatingRefreshToken.value = true
+  store.dispatch('user/getNewRefreshToken', id.value).then(resp => {
+    return copyToClipboard(resp.data?.token || '').then(() => {
+      $q.notify({ type: 'positive', message: 'Copied to clipboard' })
+    }, err => {
+      $q.notify({ type: 'negative', message: err })
+    })
+  }, err => {
+    $q.notify({ type: 'negative', message: err.data.desc })
+  }).then(() => {
+    creatingRefreshToken.value = false
   })
 }
 
@@ -182,7 +294,6 @@ const onSubmitClick = () => {
     router.back()
   }, err => {
     $q.notify({ type: 'negative', message: err.data.desc })
-  }).then(() => {
     loading.value = false
   })
 }
@@ -199,7 +310,6 @@ const onDeleteClick = () => {
       router.back()
     }, err => {
       $q.notify({ type: 'negative', message: err.data.desc })
-    }).then(() => {
       loading.value = false
     })
   })

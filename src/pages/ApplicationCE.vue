@@ -111,7 +111,6 @@ const onSubmitClick = () => {
     router.back()
   }, err => {
     $q.notify({ type: 'negative', message: err.data.desc })
-  }).then(() => {
     loading.value = false
   })
 }
@@ -128,7 +127,6 @@ const onDeleteClick = () => {
       router.back()
     }, err => {
       $q.notify({ type: 'negative', message: err.data.desc })
-    }).then(() => {
       loading.value = false
     })
   })

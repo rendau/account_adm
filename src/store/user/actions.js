@@ -6,6 +6,14 @@ export function get (ctx, id) {
   return this.$api.get(`usr/${id}`)
 }
 
+export function getNewAccessToken (ctx, id) {
+  return this.$api.get(`usr/${id}/new_access_token`)
+}
+
+export function getNewRefreshToken (ctx, id) {
+  return this.$api.get(`usr/${id}/new_refresh_token`)
+}
+
 export function save (ctx, { id, data }) {
   if (!id) {
     return this.$api.post(`usr`, data)
