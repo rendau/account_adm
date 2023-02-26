@@ -61,33 +61,35 @@
                 </div>
 
                 <!-- all-roles -->
-                <div v-if="enabled" class="col-12 col-md-6">
-                  <ac-section-title>All roles</ac-section-title>
+                <div class="col-12 col-md-6">
+                  <template v-if="enabled">
+                    <ac-section-title>All roles</ac-section-title>
 
-                  <q-scroll-area visible
-                                 :thumb-style="$u.verScrollBarStyle().thumb"
-                                 :bar-style="$u.verScrollBarStyle().bar"
-                                 style="height: 300px"
-                                 class="br1 rounded-borders q-py-xs">
-                    <q-list separator dense>
-                      <q-item v-for="r in filteredRoles" :key="`role-${r.id}`"
-                              tag="label" clickable>
-                        <q-item-section side>
-                          <q-checkbox dense v-model="data.role_ids" :val="r.id"/>
-                        </q-item-section>
+                    <q-scroll-area visible
+                                   :thumb-style="$u.verScrollBarStyle().thumb"
+                                   :bar-style="$u.verScrollBarStyle().bar"
+                                   style="height: 300px"
+                                   class="br1 rounded-borders q-py-xs">
+                      <q-list separator dense>
+                        <q-item v-for="r in filteredRoles" :key="`role-${r.id}`"
+                                tag="label" clickable>
+                          <q-item-section side>
+                            <q-checkbox dense v-model="data.role_ids" :val="r.id"/>
+                          </q-item-section>
 
-                        <q-item-section>
-                          <div class="text-weight-medium">
-                            {{ r.name }}
-                          </div>
-                        </q-item-section>
+                          <q-item-section>
+                            <div class="text-weight-medium">
+                              {{ r.name }}
+                            </div>
+                          </q-item-section>
 
-                        <q-item-section v-if="r.is_system" side class="text-caption">
-                          system
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-scroll-area>
+                          <q-item-section v-if="r.is_system" side class="text-caption">
+                            system
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-scroll-area>
+                  </template>
                 </div>
 
                 <!-- customAccessTokenDur -->
