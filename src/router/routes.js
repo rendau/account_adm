@@ -54,18 +54,6 @@ const routes = [
         ],
       },
       {
-        path: 'applications',
-        name: 'applications',
-        component: () => import('pages/Applications.vue'),
-        children: [
-          {
-            path: 'ce/:application_id?',
-            name: 'applications-application_ce',
-            component: () => import('pages/ApplicationCE.vue'),
-          }
-        ],
-      },
-      {
         path: 'perms',
         name: 'perms',
         component: () => import('pages/Perms.vue'),
@@ -76,6 +64,23 @@ const routes = [
             component: () => import('pages/PermCE.vue'),
           },
         ],
+      },
+      {
+        path: 'applications',
+        name: 'applications',
+        component: () => import('pages/Applications.vue'),
+        children: [
+          {
+            path: 'ce/:application_id?',
+            name: 'applications-application_ce',
+            component: () => import('pages/ApplicationCE.vue'),
+          },
+        ],
+      },
+      {
+        path: 'config',
+        name: 'config',
+        component: () => import('pages/ConfigE.vue'),
       },
     ],
   },

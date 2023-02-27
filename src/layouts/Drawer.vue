@@ -48,5 +48,10 @@ const menus = computed(() => _.reject([
     icon: 'grid_view',
     route: { name: 'applications' },
   },
+  store.getters['profile/isSAdmin'] && {
+    label: 'Configurations',
+    icon: 'settings',
+    route: { name: 'config' },
+  },
 ], x => !x))
 </script>
