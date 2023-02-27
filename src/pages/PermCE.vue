@@ -12,16 +12,21 @@
           <div v-if="!loading && data" class="row">
             <div class="col-12 col-md-10 col-lg-6">
               <div class="row items-start q-col-gutter-md">
-                <!-- active -->
+                <!-- is_system -->
                 <div v-if="data.is_system" class="col-12 text-negative">
                   System
+                </div>
+
+                <!-- is_fetched -->
+                <div v-if="data.is_fetched" class="col-12 text-negative">
+                  Fetched
                 </div>
 
                 <!-- app_id -->
                 <div class="col-12 col-md-6">
                   <q-select options-dense outlined map-options emit-value
                             label="App"
-                            :readonly="data.is_system"
+                            :readonly="!enabled"
                             v-model="data.app_id"
                             :options="appOps"/>
                 </div>
@@ -31,14 +36,14 @@
                 <!-- code -->
                 <div class="col-12 col-md-6">
                   <q-input outlined
-                           :readonly="data.is_system"
+                           :readonly="!enabled"
                            label="Code"
                            v-model="data.code"/>
                 </div>
 
                 <!-- is_all -->
                 <div class="col-12 col-md-6">
-                  <q-toggle :disable="data.is_system"
+                  <q-toggle :disable="!enabled"
                             label="Is All"
                             v-model="data.is_all"/>
                 </div>
@@ -46,7 +51,7 @@
                 <!-- dsc -->
                 <div class="col-12">
                   <q-input outlined
-                           :readonly="data.is_system"
+                           :readonly="!enabled"
                            label="Description"
                            v-model="data.dsc"/>
                 </div>
@@ -54,7 +59,7 @@
             </div>
           </div>
 
-          <template v-if="!data.is_system">
+          <template v-if="enabled">
             <div class="q-pt-lg q-pb-md"/>
 
             <div class="row items-center q-gutter-x-md">
@@ -106,6 +111,7 @@ const data = ref({
   app_id: null,
   dsc: '',
   is_system: false,
+  is_fetched: false,
 })
 const apps = computed(() => {
   let res = store.state.dic.apps
@@ -115,6 +121,7 @@ const apps = computed(() => {
   return res
 })
 const appOps = computed(() => util.lOps(apps.value))
+const enabled = computed(() => !data.value.is_system && !data.value.is_fetched)
 
 const fetch = () => {
   if (isCreating.value) return

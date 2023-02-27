@@ -30,12 +30,29 @@
                   <q-input outlined
                            :readonly="!enabled"
                            label="Perm Url"
-                           v-model="data.perm_url"/>
+                           debounce="500"
+                           v-model="data.perm_url"
+                           @update:model-value="onPermUrlChange">
+                    <template v-slot:append v-if="fetchingPerms">
+                      <ac-spn size="1.5rem"/>
+                    </template>
+
+                    <template v-slot:append v-else-if="permsOk">
+                      <q-icon name="task_alt" color="positive" size="1.6rem"/>
+                    </template>
+
+                    <template v-slot:after v-if="!isCreating && !permUrlChanged">
+                      <q-btn dense no-caps unelevated icon="refresh" label="reload"
+                             :loading="syncingPerms" color="secondary" size=".8rem" class="q-px-sm"
+                             @click="onSyncPermsClick"/>
+                    </template>
+                  </q-input>
                 </div>
               </div>
             </div>
           </div>
 
+          <!-- actions -->
           <template v-if="enabled">
             <div class="q-pt-lg q-pb-md"/>
 
@@ -81,6 +98,10 @@ const props = defineProps({
 const id = computed(() => (parseInt(route.params.application_id) || 0))
 const isCreating = computed(() => !id.value)
 const loading = ref(false)
+const permUrlChanged = ref(false)
+const fetchingPerms = ref(false)
+const syncingPerms = ref(false)
+const permsOk = ref(false)
 const data = ref({
   id: '',
   name: '',
@@ -98,6 +119,42 @@ const fetch = () => {
     $q.notify({ type: 'negative', message: err.data.desc })
   }).then(() => {
     loading.value = false
+  })
+}
+
+const fetchPerms = uri => {
+  if (fetchingPerms.value) return
+  if (!uri) return
+
+  fetchingPerms.value = true
+  store.dispatch('application/fetchPerms', uri).then(resp => {
+    permsOk.value = resp.data?.perms?.length > 0
+  }, () => {}).then(() => {
+    fetchingPerms.value = false
+  })
+}
+
+const onPermUrlChange = v => {
+  if (isCreating.value) return
+
+  permUrlChanged.value = true
+  permsOk.value = false
+
+  if (!v) return
+
+  return fetchPerms(v)
+}
+
+const onSyncPermsClick = () => {
+  if (isCreating.value) return
+
+  syncingPerms.value = true
+  store.dispatch('application/syncPerms', id.value).then(() => {
+    $q.notify({ type: 'positive', message: t('success_perform_msg') })
+  }, err => {
+    $q.notify({ type: 'negative', message: err.data.desc })
+  }).then(() => {
+    syncingPerms.value = false
   })
 }
 

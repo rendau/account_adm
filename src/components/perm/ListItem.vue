@@ -1,5 +1,5 @@
 <template>
-  <tr class="cursor-pointer" :class="{'text-grey-6': data.is_system}">
+  <tr class="cursor-pointer" :class="{'text-grey-6': data.is_system || data.is_fetched}">
     <td class="text-no-wrap text-center">
       {{ $u.lGetAttr('apps', data.app_id) }}
     </td>
@@ -18,6 +18,10 @@
 
     <td class="text-no-wrap text-center">
       {{ data.is_system ? 'Yes': '' }}
+    </td>
+
+    <td class="text-no-wrap text-center">
+      {{ data.is_fetched ? 'Yes': '' }}
     </td>
   </tr>
 </template>

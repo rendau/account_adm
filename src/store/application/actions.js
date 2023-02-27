@@ -1,4 +1,4 @@
-export function list (ctx, params={}) {
+export function list (ctx, params = {}) {
   return this.$api.get('app', { params })
 }
 
@@ -18,4 +18,12 @@ export function save (ctx, { id, data }) {
 
 export function remove (ctx, id) {
   return this.$api.delete(`app/${id}`).then(resp => ctx.dispatch('dic/getDic', null, { root: true }).then(() => resp))
+}
+
+export function fetchPerms (ctx, uri) {
+  return this.$api.post('app/fetch_perms', { uri })
+}
+
+export function syncPerms (ctx, id) {
+  return this.$api.put(`app/${id}/sync_perms`)
 }

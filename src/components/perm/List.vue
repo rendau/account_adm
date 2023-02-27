@@ -13,6 +13,8 @@
         <th class="min-width text-no-wrap">Is All</th>
 
         <th class="min-width text-no-wrap">Is System</th>
+
+        <th class="min-width text-no-wrap">Is Fetched</th>
       </tr>
       </thead>
 
