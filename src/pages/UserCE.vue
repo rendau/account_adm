@@ -103,7 +103,7 @@
                 <div class="col-12 col-md-4">
                   <q-input v-if="customAccessTokenDur"
                            :disable="!$store.getters['profile/isSAdmin']"
-                           outlined type="tel" mask="##########" unmasked-value
+                           outlined type="number"
                            label="Access Token Duration"
                            suffix="sec"
                            v-model.number="data.access_token_dur_seconds"/>
@@ -111,7 +111,7 @@
 
                 <!-- generate and copy new access token -->
                 <div class="col-12 col-md-4 non-selectable">
-                  <q-btn v-if="customAccessTokenDur && !isCreating && $store.getters['profile/isSAdmin']"
+                  <q-btn v-if="!isCreating && $store.getters['profile/isSAdmin']"
                          dense unelevated no-caps
                          :loading="creatingAccessToken"
                          label="get new access token" icon="content_copy"
@@ -130,7 +130,7 @@
                 <div class="col-12 col-md-4">
                   <q-input v-if="customRefreshTokenDur"
                            :disable="!$store.getters['profile/isSAdmin']"
-                           outlined type="tel" mask="##########" unmasked-value
+                           outlined type="number" mask="##########" unmasked-value
                            label="Refresh Token Duration"
                            suffix="sec"
                            v-model.number="data.refresh_token_dur_seconds"/>
@@ -138,7 +138,7 @@
 
                 <!-- generate and copy new refresh token -->
                 <div class="col-12 col-md-4 non-selectable">
-                  <q-btn v-if="customRefreshTokenDur && !isCreating && $store.getters['profile/isSAdmin']"
+                  <q-btn v-if="!isCreating && $store.getters['profile/isSAdmin']"
                          dense unelevated no-caps
                          :loading="creatingRefreshToken"
                          label="get new refresh token" icon="content_copy"
@@ -228,8 +228,8 @@ const fetch = () => {
 
   store.dispatch('user/get', id.value).then(resp => {
     data.value = resp.data
-    customAccessTokenDur.value = data.value.access_token_dur_seconds > 0
-    customRefreshTokenDur.value = data.value.refresh_token_dur_seconds > 0
+    customAccessTokenDur.value = data.value.access_token_dur_seconds !== 0
+    customRefreshTokenDur.value = data.value.refresh_token_dur_seconds !== 0
   }, err => {
     $q.notify({ type: 'negative', message: err.data.desc })
   }).then(() => {
