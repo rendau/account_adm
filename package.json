@@ -1,8 +1,8 @@
 {
-  "name": "qfe_temp",
+  "name": "Account",
   "version": "0.0.1",
-  "description": "qfe_temp",
-  "productName": "qfe_temp",
+  "description": "Account",
+  "productName": "Account",
   "author": "Dauren",
   "private": true,
   "scripts": {

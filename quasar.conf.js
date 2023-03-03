@@ -167,9 +167,9 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: `qfe_temp`,
-        short_name: `qfe_temp`,
-        description: `qfe_temp`,
+        name: `Account`,
+        short_name: `Account`,
+        description: `Account`,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
@@ -234,7 +234,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'qfe_temp'
+        appId: 'account'
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
