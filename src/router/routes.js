@@ -25,9 +25,10 @@ const routes = [
   },
   {
     path: '/',
+    name: 'app',
     component: () => import('layouts/MainLayout.vue'),
     meta: { requiresAuth: true },
-    redirect: { name: 'users' },
+    // redirect: { name: 'users' },
     children: [
       {
         path: 'users',

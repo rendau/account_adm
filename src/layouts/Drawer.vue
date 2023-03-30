@@ -19,11 +19,14 @@
 
 <script setup>
 import _ from 'lodash'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { cns } from 'boot/cns'
+import { useRoute, useRouter } from 'vue-router'
 
 const store = useStore()
+const route = useRoute()
+const router = useRouter()
 
 const hasPerm = store.getters['profile/hasPerm']
 
@@ -54,4 +57,13 @@ const menus = computed(() => _.reject([
     route: { name: 'config' },
   },
 ], x => !x))
+
+onMounted(() => {
+  if (route.name === 'app' && menus.value.length) {
+    let firstRoute = _.get(menus.value, '[0].route')
+    if (firstRoute) {
+      router.replace(firstRoute)
+    }
+  }
+})
 </script>
