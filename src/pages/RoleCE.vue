@@ -80,8 +80,8 @@
                                  class="br1 rounded-borders q-py-xs">
                     <q-list separator dense>
                       <template v-for="app in filteredPermApps">
-                        <q-item-label class="text-caption q-pl-sm q-pt-sm">
-                          {{ app.name }}
+                        <q-item-label class="text-secondary text-weight-medium q-pl-sm q-py-sm">
+                          {{ app.name }}:
                         </q-item-label>
 
                         <q-item v-for="p in app.perms" :key="`perm-${p.id}`"
