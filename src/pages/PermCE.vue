@@ -85,24 +85,25 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
-import { useStore } from 'vuex'
-import { useQuasar } from 'quasar'
-import { useI18n } from 'vue-i18n/index'
-import { util } from 'boot/util'
+import {useRoute, useRouter} from 'vue-router'
+import {computed, onMounted, ref} from 'vue'
+import {useStore} from 'vuex'
+import {useQuasar} from 'quasar'
+import {useI18n} from 'vue-i18n/index'
+import {util} from 'boot/util'
 
 const route = useRoute()
 const router = useRouter()
 const store = useStore()
 const $q = useQuasar()
-const { t } = useI18n()
+const {t} = useI18n()
 
 const props = defineProps({
   rid: {},
 })
 
 const id = computed(() => (parseInt(route.params.perm_id) || 0))
+const qpAppId = computed(() => parseInt(route.query.app_id) || null)
 const isCreating = computed(() => !id.value)
 const loading = ref(false)
 const data = ref({
@@ -116,7 +117,7 @@ const data = ref({
 const apps = computed(() => {
   let res = store.state.dic.apps
   if (!data.value.is_system) {
-    return _.reject(res, { is_account_app: true })
+    return _.reject(res, {is_account_app: true})
   }
   return res
 })
@@ -124,13 +125,18 @@ const appOps = computed(() => util.lOps(apps.value))
 const enabled = computed(() => !data.value.is_system && !data.value.is_fetched)
 
 const fetch = () => {
-  if (isCreating.value) return
+  if (isCreating.value) {
+    if (qpAppId.value && _.find(apps.value, {id: qpAppId.value})) {
+      data.value.app_id = qpAppId.value
+    }
+    return
+  }
 
   loading.value = true
   store.dispatch('perm/get', id.value).then(resp => {
     data.value = resp.data
   }, err => {
-    $q.notify({ type: 'negative', message: err.data.desc })
+    $q.notify({type: 'negative', message: err.data.desc})
   }).then(() => {
     loading.value = false
   })
@@ -142,10 +148,10 @@ const onSubmitClick = () => {
     id: id.value,
     data: data.value,
   }).then(() => {
-    $q.notify({ type: 'positive', message: t('success_perform_msg') })
+    $q.notify({type: 'positive', message: t('success_perform_msg')})
     router.back()
   }, err => {
-    $q.notify({ type: 'negative', message: err.data.desc })
+    $q.notify({type: 'negative', message: err.data.desc})
     loading.value = false
   })
 }
@@ -153,15 +159,15 @@ const onSubmitClick = () => {
 const onDeleteClick = () => {
   $q.dialog({
     message: 'Are you sure you want to delete the permission?',
-    ok: { label: 'Yes', noCaps: true },
-    cancel: { label: 'Cancel', flat: true, noCaps: true },
+    ok: {label: 'Yes', noCaps: true},
+    cancel: {label: 'Cancel', flat: true, noCaps: true},
   }).onOk(() => {
     loading.value = true
     store.dispatch('perm/remove', id.value).then(() => {
-      $q.notify({ type: 'positive', message: t('success_perform_msg') })
+      $q.notify({type: 'positive', message: t('success_perform_msg')})
       router.back()
     }, err => {
-      $q.notify({ type: 'negative', message: err.data.desc })
+      $q.notify({type: 'negative', message: err.data.desc})
       loading.value = false
     })
   })

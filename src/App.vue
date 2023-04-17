@@ -26,7 +26,7 @@ const store = useStore()
 const loading = computed(() => store.state.app.loading)
 const appError = computed(() => store.state.app.appError)
 
-store.commit('profile/setTokenAccess', '')
+// store.commit('profile/setTokenAccess', '')
 // store.commit('profile/setTokenRefresh', '')
 
 onMounted(() => {
